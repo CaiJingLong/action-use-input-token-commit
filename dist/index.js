@@ -68,8 +68,8 @@ function doIt() {
   git config --global user.name "github-actions[bot]"
   git add README.md
   git commit -m "Update by ${commmentAuthor} on ${htmlUrl}"
-  gh auth login --with-token ${token} -h github.com
-  gh auth setup-git -h github.com
+  echo '${token}' | gh auth login --with-token --hostname github.com
+  gh setup-git -h github.com
   git push origin main
 `);
 }
