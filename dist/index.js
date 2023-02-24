@@ -64,18 +64,27 @@ function doIt() {
     // Use gh cli to auth
     shelljs_1.default.exec(`
   echo "${writeText}" >> README.md
-  git config --global user.email github-actions[bot]@users.noreply.github.com"
+  git config --global user.email "github-actions[bot]@users.noreply.github.com"
   git config --global user.name "github-actions[bot]"
   git add README.md
-  git commit -m "Update README.md"
+  git commit -m "Update by ${commmentAuthor} on ${htmlUrl}"
   gh auth login --with-token ${token} -h github.com
   gh auth setup-git -h github.com
   git push origin main
 `);
 }
+function checkEnv() {
+    if (!shelljs_1.default.which('gh')) {
+        throw new Error('gh cli not found');
+    }
+    if (!shelljs_1.default.which('git')) {
+        throw new Error('git cli not found');
+    }
+}
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            checkEnv();
             core.info(`context: ${JSON.stringify(github_1.context, undefined, 2)}`);
             doIt();
         }
