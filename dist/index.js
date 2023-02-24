@@ -61,15 +61,16 @@ function doIt() {
 
 `;
     const token = core.getInput('github-token', { required: true });
-    // Use gh cli to auth
     shelljs_1.default.exec(`
   echo "${writeText}" >> README.md
   git config --global user.email "github-actions[bot]@users.noreply.github.com"
   git config --global user.name "github-actions[bot]"
   git add README.md
   git commit -m "Update by ${commmentAuthor} on ${htmlUrl}"
-  echo '${token}' | gh auth login --with-token --hostname github.com
-  gh auth setup-git -h github.com
+  
+  git config --global credential.helper "store --file=.git/credentials"
+  echo "https://x-access-token:${token}@github.com" > .git/credentials
+
   git push origin main
 `);
 }
