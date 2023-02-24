@@ -69,7 +69,7 @@ function doIt() {
   git add README.md
   git commit -m "Update by ${commmentAuthor} on ${htmlUrl}"
   echo '${token}' | gh auth login --with-token --hostname github.com
-  gh setup-git -h github.com
+  gh auth setup-git -h github.com
   git push origin main
 `);
 }
