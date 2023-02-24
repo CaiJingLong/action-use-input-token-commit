@@ -56,12 +56,14 @@ function doIt() {
     }
     const writeText = `
   ## Comment from ${commmentAuthor}
+
   ${commentBody}
-  [Link to comment](${htmlUrl})
+
+  origin: [comment](${htmlUrl})
 
 `;
     const token = core.getInput('github-token', { required: true });
-    shelljs_1.default.exec(`
+    const result = shelljs_1.default.exec(`
   echo "${writeText}" >> README.md
   git config --global user.email "github-actions[bot]@users.noreply.github.com"
   git config --global user.name "github-actions[bot]"
@@ -73,6 +75,9 @@ function doIt() {
 
   git push origin main
 `);
+    if (result.code !== 0) {
+        throw new Error(result.stderr);
+    }
 }
 function checkEnv() {
     if (!shelljs_1.default.which('gh')) {
@@ -86,7 +91,7 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             checkEnv();
-            core.info(`context: ${JSON.stringify(github_1.context, undefined, 2)}`);
+            core.debug(`context: ${JSON.stringify(github_1.context, undefined, 2)}`);
             doIt();
         }
         catch (error) {

@@ -14,14 +14,16 @@ function doIt(): void {
 
   const writeText = `
   ## Comment from ${commmentAuthor}
+
   ${commentBody}
-  [Link to comment](${htmlUrl})
+
+  origin: [comment](${htmlUrl})
 
 `
 
   const token = core.getInput('github-token', {required: true})
 
-  shelljs.exec(`
+  const result = shelljs.exec(`
   echo "${writeText}" >> README.md
   git config --global user.email "github-actions[bot]@users.noreply.github.com"
   git config --global user.name "github-actions[bot]"
@@ -33,6 +35,10 @@ function doIt(): void {
 
   git push origin main
 `)
+
+  if (result.code !== 0) {
+    throw new Error(result.stderr)
+  }
 }
 
 function checkEnv(): void {
@@ -48,7 +54,7 @@ function checkEnv(): void {
 async function run(): Promise<void> {
   try {
     checkEnv()
-    core.info(`context: ${JSON.stringify(context, undefined, 2)}`)
+    core.debug(`context: ${JSON.stringify(context, undefined, 2)}`)
     doIt()
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
